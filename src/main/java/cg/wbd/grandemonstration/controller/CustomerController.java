@@ -1,5 +1,6 @@
 package cg.wbd.grandemonstration.controller;
 
+import cg.wbd.grandemonstration.service.exception.DuplicateEmailException;
 import cg.wbd.grandemonstration.model.Customer;
 import cg.wbd.grandemonstration.model.Province;
 import cg.wbd.grandemonstration.service.CustomerService;
@@ -44,10 +45,20 @@ public class CustomerController {
         return modelAndView;
     }
 
+//    @PostMapping
+//    public ModelAndView updateCustomer(Customer customer) {
+//        customerService.save(customer);
+//        return new ModelAndView("redirect:/customers");
+//    }
+
     @PostMapping
-    public ModelAndView updateCustomer(Customer customer) {
-        customerService.save(customer);
-        return new ModelAndView("redirect:/customers");
+    public ModelAndView updateCustomer(Customer customer){
+        try {
+            customerService.save(customer);
+            return new ModelAndView("redirect:/customers");
+        } catch (DuplicateEmailException e) {
+            return new ModelAndView("/customers/inputs-not-acceptable");
+        }
     }
 
     private Page<Customer> getPage(Pageable pageInfo) {
