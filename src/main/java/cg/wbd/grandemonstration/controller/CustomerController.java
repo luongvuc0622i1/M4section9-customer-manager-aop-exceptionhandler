@@ -52,13 +52,9 @@ public class CustomerController {
 //    }
 
     @PostMapping
-    public ModelAndView updateCustomer(Customer customer){
-        try {
+    public ModelAndView updateCustomer(Customer customer) throws DuplicateEmailException {
             customerService.save(customer);
             return new ModelAndView("redirect:/customers");
-        } catch (DuplicateEmailException e) {
-            return new ModelAndView("/customers/inputs-not-acceptable");
-        }
     }
 
     private Page<Customer> getPage(Pageable pageInfo) {
@@ -67,5 +63,10 @@ public class CustomerController {
 
     private Page<Customer> search(Optional<String> s, Pageable pageInfo) {
         return customerService.search(s.get(), pageInfo);
+    }
+
+    @ExceptionHandler(DuplicateEmailException.class)
+    public ModelAndView showInputNotAcceptable() {
+        return new ModelAndView("/customers/inputs-not-acceptable");
     }
 }
